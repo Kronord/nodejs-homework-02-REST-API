@@ -5,4 +5,19 @@ const createError = (status, message) => {
   return e;
 };
 
-module.exports = createError;
+const errorOrResponce = (status, body) => {
+  return {
+    Status: status,
+    "Content-Type": "application/json",
+    ResponseBody: body,
+  };
+};
+
+const unauthorizedError = (status, body) => { 
+  return {
+    Status: status,
+    ResponseBody: body,
+  };
+};
+
+module.exports = {createError, errorOrResponce, unauthorizedError};

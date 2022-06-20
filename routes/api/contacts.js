@@ -1,5 +1,6 @@
 const express = require("express");
 const { schema, schemaPatch } = require("../../Validation/contactsValidation");
+const authMiddleware = require('../../Middlewares/authMiddleware');
 const { validateRequest } = require("../../Middlewares/validateRequest");
 const {
   getAll,
@@ -11,15 +12,15 @@ const {
 } = require("../../Controllers/contactsController");
 const router = express.Router();
 
-router.get("/", getAll);
+router.get("/", authMiddleware, getAll);
 
-router.get("/:contactId", getById);
+router.get("/:contactId", authMiddleware, getById);
 
-router.post("/", validateRequest(schema), create);
+router.post("/", authMiddleware, validateRequest(schema), create);
 
-router.delete("/:contactId", deleteById);
+router.delete("/:contactId", authMiddleware, deleteById);
 
-router.put("/:contactId", updateById);
+router.put("/:contactId", authMiddleware, updateById);
 
 router.patch(
   "/:contactId/favorite",

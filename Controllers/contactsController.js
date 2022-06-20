@@ -1,9 +1,10 @@
-const getError = require("../error");
-const contacts = require("../services/services");
+const {createError} = require("../error");
+const contacts = require("../services/contactServices");
 
 const getAll = async (req, res, next) => {
   try {
-    const contactsList = await contacts.getContacts();
+    const { _id } = req.user;
+    const contactsList = await contacts.getContacts(_id, req.query);
     res.status(200).json(contactsList);
   } catch (err) {
     next(err);
@@ -13,9 +14,10 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const contact = await contacts.getContactById(contactId);
+    const { _id } = req.user;
+    const contact = await contacts.getContactById(contactId, _id);
     if (!contact) {
-      throw getError(404, "Not found");
+      throw createError(404, "Not found");
     }
     res.status(200).json(contact);
   } catch (err) {
@@ -25,7 +27,8 @@ const getById = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const newContact = await contacts.addContact(req.body);
+    const { _id } = req.user;
+    const newContact = await contacts.addContact(req.body, _id);
     res.status(201).json(newContact);
   } catch (err) {
     next(err);
@@ -35,12 +38,14 @@ const create = async (req, res, next) => {
 const updateById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
+    const { _id } = req.user;
     const updatedContact = await contacts.updateContactByID(
       contactId,
-      req.body
+      req.body, 
+      _id
     );
     if (!updatedContact) {
-      throw getError(404, "Not found");
+      throw createError(404, "Not found");
     }
     res.json(updatedContact);
   } catch (err) {
@@ -51,9 +56,10 @@ const updateById = async (req, res, next) => {
 const deleteById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const deletedContact = await contacts.deleteContactById(contactId);
+    const { _id } = req.user;
+    const deletedContact = await contacts.deleteContactById(contactId, _id);
     if (!deletedContact) {
-      throw getError(404, "Not found");
+      throw createError(404, "Not found");
     }
     res.status(200).json({ message: "contact deleted" });
   } catch (err) {
@@ -64,12 +70,14 @@ const deleteById = async (req, res, next) => {
 const updateStatusById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
+    const { _id } = req.user;
     const updatedContact = await contacts.updateStatusContact(
       contactId,
-      req.body
+      req.body,
+      _id
     );
     if (!updatedContact) {
-      throw getError(404, "Not found");
+      throw createError(404, "Not found");
     }
     res.json(updatedContact);
   } catch (err) {
