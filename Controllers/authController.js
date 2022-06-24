@@ -1,9 +1,13 @@
-const { registration, login, logout, updateSubscription, } = require("../services/authServices");
+const {
+  registration,
+  login,
+  logout,
+  updateSubscription,
+} = require("../services/authServices");
 const { errorOrResponce, unauthorizedError, createError } = require("../error");
 
 const registrationController = async (req, res, next) => {
   try {
-    const { email, subscription } = req.body;
     const request = await registration(req.body);
     if (request === null) {
       res.status(409).json(
@@ -14,7 +18,7 @@ const registrationController = async (req, res, next) => {
     }
     res.status(201).json(
       errorOrResponce("201 Created", {
-        user: { email, subscription },
+        user: request,
       })
     );
   } catch (error) {
@@ -58,33 +62,30 @@ const logoutController = async (req, res, next) => {
 
 const currentUserController = async (req, res, next) => {
   try {
-    res.status(200).json(
-      errorOrResponce("200 OK", req.user)
-    );
+    res.status(200).json(errorOrResponce("200 OK", req.user));
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 const updateSubscriptionController = async (req, res, next) => {
   try {
+    console.log(req.user);
     const { _id } = req.user;
     const updateUser = await updateSubscription(_id, req.body);
     if (!updateUser) {
       throw createError(404, "Not found");
-    };
+    }
     res.json(updateUser);
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
-}
-  
+};
 
-  module.exports = {
-    registrationController,
-    loginController,
-    logoutController,
-    currentUserController,
-    updateSubscriptionController,
-  };
+module.exports = {
+  registrationController,
+  loginController,
+  logoutController,
+  currentUserController,
+  updateSubscriptionController,
+};
