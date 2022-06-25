@@ -1,6 +1,6 @@
 const express = require("express");
 const { schema, schemaPatch } = require("../../Validation/contactsValidation");
-const authMiddleware = require('../../Middlewares/authMiddleware');
+const authMiddleware = require("../../Middlewares/authMiddleware");
 const { validateRequest } = require("../../Middlewares/validateRequest");
 const {
   getAll,

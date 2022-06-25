@@ -13,6 +13,7 @@ const uploadPicture = async (id, file) => {
     })
     .catch((e) => console.log(e))
     .finally(await fs.unlink(file.path));
+  return avatarURL;
 };
 
 module.exports = {

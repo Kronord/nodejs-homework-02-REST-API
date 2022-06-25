@@ -2,9 +2,9 @@ const { uploadPicture } = require("../services/uploadFileServices");
 const { updateAvatar } = require("../services/updateAvatarServices");
 const { errorOrResponce } = require("../error");
 
-const usersController = async (res, {req}, next) => {
+const usersController = async (req, res, next) => {
   try {
-      console.log(res.res);
+    console.log(req);
     const { _id: id } = req.user;
     const avatarURL = await uploadPicture(id, req.file);
     if (!avatarURL) {
@@ -14,8 +14,8 @@ const usersController = async (res, {req}, next) => {
         })
       );
       console.log(avatarURL);
-      }
-      
+    }
+
     await updateAvatar(id, { avatarURL });
 
     res.status(200).json(errorOrResponce("200 OK", { avatarURL }));
@@ -24,4 +24,4 @@ const usersController = async (res, {req}, next) => {
   }
 };
 
-module.exports = {usersController};
+module.exports = { usersController };

@@ -15,6 +15,11 @@ router.post("/signup", validateRequest(schema), registrationController);
 router.post("/login", validateRequest(schema), loginController);
 router.get("/logout", authMiddleware, logoutController);
 router.get("/current", authMiddleware, currentUserController);
-router.patch("/", authMiddleware, validateRequest(updateSchema), updateSubscriptionController);
+router.patch(
+  "/",
+  authMiddleware,
+  validateRequest(updateSchema),
+  updateSubscriptionController
+);
 
 module.exports = router;
