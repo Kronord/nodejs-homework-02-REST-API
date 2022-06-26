@@ -13,11 +13,11 @@ const errorOrResponce = (status, body) => {
   };
 };
 
-const unauthorizedError = (status, body) => { 
+const unauthorizedError = (status, body) => {
   return {
     Status: status,
     ResponseBody: body,
   };
 };
 
-module.exports = {createError, errorOrResponce, unauthorizedError};
+module.exports = { createError, errorOrResponce, unauthorizedError };

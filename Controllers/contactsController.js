@@ -1,4 +1,4 @@
-const {createError} = require("../error");
+const { createError } = require("../error");
 const contacts = require("../services/contactServices");
 
 const getAll = async (req, res, next) => {
@@ -41,7 +41,7 @@ const updateById = async (req, res, next) => {
     const { _id } = req.user;
     const updatedContact = await contacts.updateContactByID(
       contactId,
-      req.body, 
+      req.body,
       _id
     );
     if (!updatedContact) {

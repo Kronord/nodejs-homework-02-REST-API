@@ -10,29 +10,27 @@ const getContacts = (owner, { limit, page, favorite }) => {
       .limit(limited);
     return contacts;
   }
-  return Contact.find({ owner })
-    .skip(skip)
-    .limit(limited);
+  return Contact.find({ owner }).skip(skip).limit(limited);
 };
 
-const getContactById = (id, owner) => Contact.findOne({_id: id, owner});
+const getContactById = (id, owner) => Contact.findOne({ _id: id, owner });
 
-const addContact = (contact, owner) => Contact.create({...contact, owner});
+const addContact = (contact, owner) => Contact.create({ ...contact, owner });
 
 const updateContactByID = (id, body, owner) =>
-  Contact.findByIdAndUpdate({_id: id, owner}, body, { new: true });
-  
+  Contact.findByIdAndUpdate({ _id: id, owner }, body, { new: true });
+
 const deleteContactById = (id, owner) =>
   Contact.findByIdAndRemove({ _id: id, owner });
 
 const updateStatusContact = (id, body, owner) =>
   Contact.findByIdAndUpdate({ _id: id, owner }, body, { new: true });
 
-  module.exports = {
-    getContacts,
-    getContactById,
-    addContact,
-    updateContactByID,
-    deleteContactById,
-    updateStatusContact,
-  };
+module.exports = {
+  getContacts,
+  getContactById,
+  addContact,
+  updateContactByID,
+  deleteContactById,
+  updateStatusContact,
+};

@@ -11,10 +11,15 @@ const {
 } = require("../../Controllers/authController");
 const router = express.Router();
 
-router.post("/users/signup", validateRequest(schema), registrationController);
-router.post("/users/login", validateRequest(schema), loginController);
-router.get("/users/logout", authMiddleware, logoutController);
-router.get("/users/current", authMiddleware, currentUserController);
-router.patch("/users", authMiddleware, validateRequest(updateSchema), updateSubscriptionController);
+router.post("/signup", validateRequest(schema), registrationController);
+router.post("/login", validateRequest(schema), loginController);
+router.get("/logout", authMiddleware, logoutController);
+router.get("/current", authMiddleware, currentUserController);
+router.patch(
+  "/",
+  authMiddleware,
+  validateRequest(updateSchema),
+  updateSubscriptionController
+);
 
 module.exports = router;

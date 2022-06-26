@@ -1,8 +1,9 @@
 const { User } = require("../models/usersModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
 
-const registration = async ({ email, password, subscription }) => {
+const registration = async ({ email, password }) => {
   const doubleEmail = await User.findOne({ email });
   if (doubleEmail) {
     return null;
@@ -10,9 +11,14 @@ const registration = async ({ email, password, subscription }) => {
   const user = new User({
     email,
     password,
-    subscription,
+    avatarURL: gravatar.url(email, {}, true),
   });
   await user.save();
+  return {
+    email: user.email,
+    subscription: user.subscription,
+    avatarURL: user.avatarURL,
+  };
 };
 
 const login = async ({ email, password }) => {
@@ -36,8 +42,8 @@ const logout = async (id) => {
   await User.findByIdAndUpdate(id, { token: null });
 };
 
-const updateSubscription = async (id, body) => await User.findByIdAndUpdate(id, body, { new: true });
-
+const updateSubscription = async (id, body) =>
+  await User.findByIdAndUpdate(id, body, { new: true });
 
 const authenticateUser = async (token) => {
   try {
