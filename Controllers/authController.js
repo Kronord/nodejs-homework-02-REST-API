@@ -31,11 +31,16 @@ const loginController = async (req, res, next) => {
     const { email, subscription } = req.body;
     const token = await login(req.body);
     if (token === null) {
-      res.status(401).json(
+      return res.status(401).json(
         unauthorizedError("401 Unauthorized", {
           message: "Email or password is wrong",
         })
       );
+    }
+    if (token === 'notVerify') {
+      return res
+        .status(401)
+        .json(createError("400", "You have not verified your email"));
     }
     res.status(200).json(
       errorOrResponce("200 OK", {

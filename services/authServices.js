@@ -2,6 +2,9 @@ const { User } = require("../models/usersModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
+const {nanoid} = require("nanoid");
+const { sgMail, sendMail } = require('../services/mailerService');
+
 
 const registration = async ({ email, password }) => {
   const doubleEmail = await User.findOne({ email });
@@ -12,8 +15,22 @@ const registration = async ({ email, password }) => {
     email,
     password,
     avatarURL: gravatar.url(email, {}, true),
+    verificationToken: nanoid(16),
   });
   await user.save();
+  sgMail
+    .send(
+      sendMail(
+        "Please Verify Your Email",
+        `To verify your email, please follow the link below http://localhost:3000/api/users//verify/${user.verificationToken}`
+      )
+    )
+    .then(() => {
+      console.log("Verify email sent");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
   return {
     email: user.email,
     subscription: user.subscription,
@@ -27,6 +44,10 @@ const login = async ({ email, password }) => {
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return null;
   }
+
+  if (user.verify === false) { 
+    return 'notVerify'
+  };
 
   const payload = {
     _id: user._id,
