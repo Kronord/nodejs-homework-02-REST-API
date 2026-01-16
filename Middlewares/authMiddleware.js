@@ -4,7 +4,7 @@ const { errorOrResponce } = require("../error");
 const authMiddleware = async (req, res, next) => {
   const { authorization = "" } = req.headers;
   const [bearer, token] = authorization.split(" ");
-
+  
   if (bearer !== "Bearer" || !token) {
     console.log(bearer, token);
     res.status(401).json(
@@ -22,6 +22,7 @@ const authMiddleware = async (req, res, next) => {
       })
     );
   }
+
   req.user = user;
   next();
 };

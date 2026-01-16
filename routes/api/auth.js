@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post("/signup", validateRequest(schema), registrationController);
 router.post("/login", validateRequest(schema), loginController);
-router.get("/logout", authMiddleware, logoutController);
+router.post("/logout", logoutController);
 router.get("/current", authMiddleware, currentUserController);
 router.patch(
   "/",

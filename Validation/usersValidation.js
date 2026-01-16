@@ -3,12 +3,13 @@ const Joi = require("joi");
 const newLocal = "^[a-zA-Z0-9]{3,30}$";
 
 const schema = Joi.object({
-  password: Joi.string().pattern(new RegExp(newLocal)),
+  name: Joi.string(),
+  password: Joi.string().pattern(new RegExp(newLocal)).required(),
 
   email: Joi.string().email({
     minDomainSegments: 2,
     tlds: { allow: ["com", "net", "ua"] },
-  }),
+  }).required(),
 });
 
 const updateSchema = Joi.object({

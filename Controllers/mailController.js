@@ -66,7 +66,7 @@ const resendingMailController = async (req, res, next) => {
     sgMail.send(
       sendMail(
         "Please Verify Your Email",
-        `To verify your email, please follow the link below http://localhost:3000/api/users//verify/${user.verificationToken}`
+        `To verify your email, please follow the link below http://localhost:3020/api/users/verify/${user.verificationToken}`
       )
     );
   } catch (error) {

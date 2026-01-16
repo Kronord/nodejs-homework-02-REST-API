@@ -2,6 +2,7 @@ const { createError } = require("../error");
 const contacts = require("../services/contactServices");
 
 const getAll = async (req, res, next) => {
+  console.log(req.user);
   try {
     const { _id } = req.user;
     const contactsList = await contacts.getContacts(_id, req.query);

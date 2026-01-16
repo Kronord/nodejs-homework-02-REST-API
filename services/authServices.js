@@ -1,41 +1,49 @@
 const { User } = require("../models/usersModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const gravatar = require("gravatar");
-const {nanoid} = require("nanoid");
-const { sgMail, sendMail } = require('../services/mailerService');
+const { nanoid } = require("nanoid");
+// const { sgMail, sendMail } = require('../services/mailerService');
 
 
-const registration = async ({ email, password }) => {
+const registration = async ({ email, password, name }) => {
   const doubleEmail = await User.findOne({ email });
   if (doubleEmail) {
     return null;
   }
+
   const user = new User({
+    name,
     email,
     password,
-    avatarURL: gravatar.url(email, {}, true),
     verificationToken: nanoid(16),
   });
   await user.save();
-  sgMail
-    .send(
-      sendMail(
-        "Please Verify Your Email",
-        `To verify your email, please follow the link below http://localhost:3000/api/users//verify/${user.verificationToken}`
-      )
-    )
-    .then(() => {
-      console.log("Verify email sent");
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-  return {
-    email: user.email,
-    subscription: user.subscription,
-    avatarURL: user.avatarURL,
+
+  const userId = await User.findOne({ email });
+  const { _id } = userId;
+
+  const payload = {
+    _id,
+    email,
+    name,
   };
+
+  const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "1h" });
+  await User.findByIdAndUpdate(_id, { token });
+  // sgMail
+  //   .send(
+  //     sendMail(
+  //       "Please Verify Your Email",
+  //       `To verify your email, please follow the link below http://localhost:3020/api/users//verify/${user.verificationToken}`
+  //     )
+  //   )
+  //   .then(() => {
+  //     console.log("Verify email sent");
+  //   })
+  //   .catch((error) => {
+  //     console.error(error.body);
+  //   });
+  return {payload, token};
 };
 
 const login = async ({ email, password }) => {
@@ -45,18 +53,19 @@ const login = async ({ email, password }) => {
     return null;
   }
 
-  if (user.verify === false) { 
-    return 'notVerify'
-  };
+  // if (user.verify === false) {
+  //   return 'notVerify'
+  // };
 
   const payload = {
     _id: user._id,
     email: user.email,
+    name: user.name,
   };
 
   const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "1h" });
   await User.findByIdAndUpdate(user._id, { token });
-  return token;
+  return { token, payload };
 };
 
 const logout = async (id) => {
@@ -68,7 +77,10 @@ const updateSubscription = async (id, body) =>
 
 const authenticateUser = async (token) => {
   try {
+    console.log(token);
     const payload = jwt.verify(token, process.env.SECRET);
+    console.log(payload);
+    
     const { _id } = payload;
     const user = await User.findById(_id);
 

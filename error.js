@@ -6,11 +6,14 @@ const createError = (status, message) => {
 };
 
 const errorOrResponce = (status, body) => {
-  return {
-    Status: status,
-    "Content-Type": "application/json",
-    ResponseBody: body,
+  if (status >= 400) {
+    return {
+      Status: status,
+      "Content-Type": "application/json",
+      ResponseBody: body,
+    };
   };
+  return body;
 };
 
 const unauthorizedError = (status, body) => {

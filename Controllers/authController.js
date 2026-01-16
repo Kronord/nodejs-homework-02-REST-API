@@ -16,9 +16,11 @@ const registrationController = async (req, res, next) => {
         })
       );
     }
+    const {payload, token} = request;
     res.status(201).json(
       errorOrResponce("201 Created", {
-        user: request,
+        user: payload,
+        token,
       })
     );
   } catch (error) {
@@ -28,8 +30,7 @@ const registrationController = async (req, res, next) => {
 
 const loginController = async (req, res, next) => {
   try {
-    const { email, subscription } = req.body;
-    const token = await login(req.body);
+    const { token, payload } = await login(req.body);
     if (token === null) {
       return res.status(401).json(
         unauthorizedError("401 Unauthorized", {
@@ -37,18 +38,15 @@ const loginController = async (req, res, next) => {
         })
       );
     }
-    if (token === 'notVerify') {
-      return res
-        .status(401)
-        .json(createError("400", "You have not verified your email"));
-    }
+    // if (token === 'notVerify') {
+    //   return res
+    //     .status(401)
+    //     .json(createError("400", "You have not verified your email"));
+    // }
     res.status(200).json(
       errorOrResponce("200 OK", {
         token,
-        user: {
-          email,
-          subscription,
-        },
+        user: payload
       })
     );
   } catch (error) {
@@ -57,8 +55,9 @@ const loginController = async (req, res, next) => {
 };
 
 const logoutController = async (req, res, next) => {
+  const { _id } = req.body;
   try {
-    await logout(req.user._id);
+    await logout(_id);
     res.sendStatus(204);
   } catch (error) {
     next(error);
@@ -67,7 +66,8 @@ const logoutController = async (req, res, next) => {
 
 const currentUserController = async (req, res, next) => {
   try {
-    res.status(200).json(errorOrResponce("200 OK", req.user));
+    const { email, name, avatarURL, subscription } = req.user;
+    res.status(200).json(errorOrResponce("200 OK", { email, name, avatarURL, subscription }));
   } catch (error) {
     next(error);
   }
